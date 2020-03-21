@@ -26,64 +26,49 @@ sum_sq_error_res = [];
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
-iteration = 3;
+iteration = 5;
 discretization = 5;
 population_min = 40000;
 population_max = 80000;
 population_vec = linspace(population_min,population_max,discretization);
 
 sum_sq_error = zeros(1,discretization);
-theta_fit = zeros(discretization,4);
-
 population0 = [];
 
 for i = 1:1:iteration
 
     for j = 1:1:discretization
         population0 = population_vec(j);   
-        dynamic_fit_return = dynamic_fit(population0, covid_data);
-        
-        sum_sq_error(j) = dynamic_fit_return(1);
-        theta_fit(j,:) = dynamic_fit_return(:,2:end);
-        
+        sum_sq_error(j) = dynamic_fit(population0, covid_data);
     end
     
     [sum_sq_error_min, index] = min(sum_sq_error);
-    
-    if (index == length(sum_sq_error) && i ~= iteration)
+    if index == length(sum_sq_error)
         index = index - 2;
     end
-    if (index < 2 && i ~= iteration)
+    if index < 2
         index = 2;
     end
     
     display(['Iteration ', num2str(i)])
     display([sum_sq_error', population_vec'])
     
-    
-    population_final = population_vec(index);
-    
-    if (i ~= iteration)
-        population_min = population_vec(index - 1);
-        population_max = population_vec(index + 1);
-        population_vec = linspace(population_min,population_max,discretization);
-    end
-    
-    
-    
-    theta_final = theta_fit(index,:);
+    population_min = population_vec(index - 1);
+    population_max = population_vec(index + 1);
+    population_vec = linspace(population_min,population_max,discretization);
 end
 % ------------------------------------------------------------------------%
 % SOLUTION AND PLOT                                                       %
 % ------------------------------------------------------------------------%
+population_final = (population_max+population_min)/2;
 display(['Final infected population:', num2str(population_final)])
-
+display([population_final, population_error]);
 
 % PLOT
 tspan = 0:1:250;
-dynamic_plot(population_final, theta_final, covid_data, tspan)
+dynamic_plot(population_final, theta, covid_data, tspan)
 
-function dynamic_fit_return = dynamic_fit(population0, covid_data)
+function dynamic_fit = dynamic_fit(population0, covid_data)
 
     x_covid = [(population0 - covid_data(:,3) - covid_data(:,4) - covid_data(:,5)), covid_data(:,[3,4,5])];
 
@@ -134,8 +119,6 @@ function dynamic_fit_return = dynamic_fit(population0, covid_data)
     % Regression results
     [theta_fit, sum_sq_error] = fmincon(@(theta)sum_error(t_covid,x_covid,x0,theta), theta0, [], [], [], [], theta_min, theta_max, [], options);
 
-    dynamic_fit_return = [sum_sq_error, theta_fit];
-
 %     theta_fit_res = [theta_fit_res, theta_fit];
 %     sum_sq_error_res = [sum_sq_error_res, sum_sq_error];
 % 
@@ -181,7 +164,7 @@ function dynamic_fit_return = dynamic_fit(population0, covid_data)
 %     hold off
 end
 
-function dynamic_plot_return = dynamic_plot(population0, theta, covid_data, tspan)
+function dynamic_plot = dynamic_plot(population0, theta, covid_data, tspan)
     % INITIAL POPULATION
     x0 = [population0 0 0 0];
 
@@ -206,5 +189,5 @@ function dynamic_plot_return = dynamic_plot(population0, theta, covid_data, tspa
     plot(t_covid,x_covid(:,4),'linewidth',1.3,'color','b')
     hold off
     
-    dynamic_plot_return = [t_predict,x_predict];
+    dynamic_plot = [t_predict,x_predict];
 end

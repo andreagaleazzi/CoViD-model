@@ -6,9 +6,8 @@ B = x(2);       % Infected
 % C = x(3);     % Cured
 % D = x(4);     % Deceased
 
-% Feasibility check
 if A < 0
-    A = 0;
+    A = 0
 end
 
 % Parameters
