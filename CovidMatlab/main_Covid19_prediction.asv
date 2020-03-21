@@ -5,7 +5,7 @@ clc
 format long g
 
 % population0 = 60.48e6;
-population0 = 65000;
+population0 = 650000;
 
 covid_data = xlsread('data\ItalyCovid19','Merged','A2:E50');
 
@@ -19,7 +19,7 @@ x_covid = [(population0 - covid_data(:,3) - covid_data(:,4) - covid_data(:,5)), 
 % BEST RESULT ON population0 = 50000:
 theta_fit = [5.3802983909872e-14 0.0191008318103062 0.0145415609610045 7.48096434430872];
 theta_fit = [7.23660501899331e-10 0.0104119012190287 0.00492330176183709 4.56756058097261];
-theta_fit = [4.27658880689957e-13 0.0192349437951722 0.0147389297460395 6.82058893256712];
+theta_fit = [4.5788960528208e-13 0.0191801427354788 0.0146943192886136 6.80167585199239];
 x0 = [population0 0 0 0];
 
 [t_predict,x_predict] = ode23s(@(t_covid,x_init)Covid19(t_covid,x_init,theta_fit),(0:1:250),x0);

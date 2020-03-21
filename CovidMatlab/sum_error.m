@@ -14,7 +14,7 @@ m = size(x_set, 1) * size(x_set, 2);
 
 sum_sq_error = 1/2/m * sum(sum((x_set - x).^2));
 
-display(theta)
-display(sum_sq_error)
+% display(theta)
+% display(sum_sq_error)
 
 end
