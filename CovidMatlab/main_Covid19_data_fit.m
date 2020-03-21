@@ -5,7 +5,7 @@ clc
 format long g
 
 % population0 = 60.48e6;
-population0 = 100000;
+population0 = 50000;
 
 % covid_data = xlsread('data\ItalyCovid19','Merged','A2:E50');
 % x_covid = [(population0 - covid_data(:,3) - covid_data(:,4) - covid_data(:,5)), covid_data(:,[3,4,5])];
