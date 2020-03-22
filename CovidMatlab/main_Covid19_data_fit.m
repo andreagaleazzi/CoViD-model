@@ -31,8 +31,8 @@ iteration = 3;
 discretization = 10;
 % population_min = 1000;
 % population_max = 2000;
-population_min = 1300;
-population_max = 1400;
+population_min = 1000;
+population_max = 1500;
 population_vec = linspace(population_min,population_max,discretization);
 
 
@@ -43,7 +43,7 @@ theta0 = [1e-14 0.01 0.01 2 10];    % RAW GUESS
 % theta0 = [1.64182349404424e-10 0.00981369927431065 0.00364185465310432 5.34660328043866];   % IMPROVED GUESS
 % theta0 = [5.42891940894845e-13 0.0178582323048478 0.01352922211711 6.85128103826894];     % BEST GUESS ON p0 = 50000
 theta_min = [0 0 0 0 0];
-theta_max = [1 1 1 12 20];
+theta_max = [100 100 100 12 20];
 % theta0 = [8.89623704161877e-07 0.0283210634595335 0.0245693015355776 3.70911541929826];
 
 

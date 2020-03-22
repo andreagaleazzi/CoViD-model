@@ -35,7 +35,8 @@ function dynamic_fit_return = dynamic_fit(covid_data, population0, theta0, theta
     % ------------------------------------------------------------------------%
     % Solve regression                                                        %
     % ------------------------------------------------------------------------%
-    options = optimset('MaxFunEvals',1e6,'TolFun',1e-10, 'TolX',1e-8, 'Display', 'off');
+%     options = optimset('MaxFunEvals',1e6,'TolFun',1e-10, 'TolX',1e-8, 'Display', 'off');
+    options = optimset('MaxFunEvals',1e6,'TolFun',1e-6, 'TolX',1e-6, 'Display', 'off');
 
     % Theta domain
 %     theta_min = zeros(1, length(theta0));
