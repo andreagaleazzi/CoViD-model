@@ -12,12 +12,11 @@ format long g
 % covid_data = xlsread('data\ChinaProvince','Henan','A2:E62');
 
 % Excel read
-excell = 'data\ChinaProvince';
+excel = 'data\ChinaProvince';
 % sheet = 'Henan';
-sheet = 'Shaanxi';
-% data_matrix = 'A2:E62';
-data_matrix = 'A2:E10';
-covid_data = xlsread(excell,sheet,data_matrix);
+sheet = 'Hubei';
+data_matrix = 'A2:E60';
+covid_data = xlsread(excel,sheet,data_matrix);
 
 % PROTEZIONE CIVILE ITALIANA
 % covid_data = xlsread('data\pcmita','Foglio1','A2:L27');
@@ -31,12 +30,12 @@ sum_sq_error_res = [];
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
-iteration = 4;
-discretization = 10;
+iteration = 5;
+discretization = 11;
 % iteration = 1;
 % discretization = 3;
 population_min = 100;
-population_max = 1500;
+population_max = 100000;
 population_vec = linspace(population_min,population_max,discretization);
 
 
@@ -102,7 +101,7 @@ disp(theta_final)
 
 % FULL DATA
 data_matrix = 'A2:E62';
-covid_data = xlsread(excell,sheet,data_matrix);
+covid_data = xlsread(excel,sheet,data_matrix);
 
 % PLOT
 tspan = 0:1:100;
