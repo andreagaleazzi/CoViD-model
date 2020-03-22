@@ -10,6 +10,9 @@ B = x(2);       % Infected
 if A < 0
     A = 0;
 end
+if B < 0
+    B = 0;
+end
 
 % Parameters
 r1 = theta(1);
