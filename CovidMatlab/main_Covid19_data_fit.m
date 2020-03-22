@@ -29,8 +29,10 @@ sum_sq_error_res = [];
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
-iteration = 3;
-discretization = 10;
+iteration = 1;
+discretization = 3;
+% iteration = 1;
+% discretization = 3;
 population_min = 1000;
 population_max = 1500;
 population_vec = linspace(population_min,population_max,discretization);
