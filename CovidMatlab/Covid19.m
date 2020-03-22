@@ -21,9 +21,10 @@ r3 = theta(3);
 t_exp = theta(4);
 t_lag = theta(5);
 
-% A = A * t^(t_exp)*(1 + exp(-t_exp));
+% Sigmoid modification
 A = A * (1 / (1 + exp(-t*t_exp + t_lag)));
 B = B * (1 / (1 + exp(-t*t_exp + t_lag)));
+
 % ODE system
 dy(1) = -r1*A;
 dy(2) = r1*A - (r2 + r3)*B;

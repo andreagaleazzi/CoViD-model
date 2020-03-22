@@ -13,8 +13,10 @@ format long g
 
 % Excel read
 excell = 'data\ChinaProvince';
-sheet = 'Henan';
-data_matrix = 'A2:E62';
+% sheet = 'Henan';
+sheet = 'Shaanxi';
+% data_matrix = 'A2:E62';
+data_matrix = 'A2:E10';
 covid_data = xlsread(excell,sheet,data_matrix);
 
 % PROTEZIONE CIVILE ITALIANA
@@ -29,11 +31,11 @@ sum_sq_error_res = [];
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
-iteration = 1;
-discretization = 3;
+iteration = 4;
+discretization = 10;
 % iteration = 1;
 % discretization = 3;
-population_min = 1000;
+population_min = 100;
 population_max = 1500;
 population_vec = linspace(population_min,population_max,discretization);
 
@@ -42,7 +44,7 @@ population_vec = linspace(population_min,population_max,discretization);
 % theta0 = [0.0001 0.01 0.01 5 1];    % RAW GUESS
 theta0 = [8 1.4 0.05 0.12 6];
 theta_min = [0 0 0 0 0];
-theta_max = [1e5 100 100 12 20];
+theta_max = [1e5 1e5 1e5 12 20];
 
 
 % Preassignment
@@ -96,6 +98,11 @@ disp(population_final)
 disp(theta_final)
 
 % covid_data = xlsread('data\ChinaProvince','Henan','A2:E62');
+
+
+% FULL DATA
+data_matrix = 'A2:E62';
+covid_data = xlsread(excell,sheet,data_matrix);
 
 % PLOT
 tspan = 0:1:100;
@@ -153,6 +160,7 @@ for extinction_index = peak_index:1:length(dynamic_plot_return(:,3))
 end
 fprintf(file,"\t%i\t%f\t%f\t%f\t%f",extintion_day,dynamic_plot_return(extinction_index,2),dynamic_plot_return(extinction_index,3),dynamic_plot_return(extinction_index,4),dynamic_plot_return(extinction_index,5));
 fclose(file);
+
 
 % Output theta (regression parameters)
 file = fopen(file_theta,'w');

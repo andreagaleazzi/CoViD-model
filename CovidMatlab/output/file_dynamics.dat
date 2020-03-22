@@ -1,0 +1,3 @@
+dynamic	day	sum	infected	cured	deceased
+peak	18	213.104865	195.169604	17.934585	0.000676
+extinction	49	222.481329	0.271479	222.201479	0.008370
