@@ -1,4 +1,4 @@
-% close all
+close all
 clearvars
 clc
 
@@ -18,14 +18,59 @@ data_matrix_tot = data_matrix;
 
 covid_data = xlsread(excel,sheet,data_matrix);
 
+dpc_file = 'dpc-covid19-ita-regioni-';
+date0 = '12-feb-2002';
+extension = '.csv';
 
+% Date
+date_now = datevec(now);
+date_vec = date_now([1,2,3]);
+day_0 = '12-mar-2020';
+day_num = datenum(day_0);
+days_total = daysact('12-mar-2020', date());
+date_str = [];
+dates_total = [];
+
+for k = 1:days_total
+    date_str
+    for i = 1:length(date_vec)
+        if (i > 1)
+            if (date_vec(i) < 10)
+                date_str = strcat(date_str,'0',num2str(date_vec(i)));
+            else
+                date_str = strcat(date_str,num2str(date_vec(i)));
+            end
+        else
+            date_str = strcat(date_str,num2str(date_vec(i)));
+        end
+    end
+end
+
+base_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/';
+url = str_cat(base_url,dpc_file,date_str,extension)
+url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv';
+options = weboptions('RequestMethod','get','ArrayFormat','csv','ContentType','text');
+try 
+    data = webread(url,options);
+    file = fopen('data/pcm-dpc.csv', 'w');
+    for i = 1:1:length(data)
+        fprintf(file,'%c',data(i));
+    end
+    fclose(file);
+catch 
+    disp('No information found.');
+end
+
+
+
+csvread()
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
-iteration = 5;
-discretization = 11;
-population_min = 40000;
-population_max = 250000;
+iteration = 2;
+discretization = 250;
+population_min = 1000;
+population_max = 400000;
 population_vec = linspace(population_min,population_max,discretization);
 
 
@@ -100,7 +145,7 @@ disp(theta_final)
 covid_data = xlsread(excel,sheet,data_matrix_tot);
 
 % PLOT
-tspan = 0:1:500;
+tspan = 0:1:1000;
 dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan);
 
 
