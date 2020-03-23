@@ -1,4 +1,4 @@
-close all
+% close all
 clearvars
 clc
 
@@ -8,23 +8,15 @@ format long g
 % DATA                                                                    %
 % ------------------------------------------------------------------------%
 % HGIS
-% covid_data = xlsread('data\ItalyCovid19','Merged','A2:E53');
-% covid_data = xlsread('data\ChinaProvince','Henan','A2:E62');
 
 % Excel read
-excel = 'data\ChinaProvince';
-% sheet = 'Henan';
-sheet = 'Hubei';
-data_matrix = 'A2:E60';
-covid_data = xlsread(excel,sheet,data_matrix);
+excel = 'data\UpdateVirus';
+sheet = 'Italy';
+data_matrix = 'A2:E53';
+% data_matrix_tot = 'A22:E53';
+data_matrix_tot = data_matrix;
 
-% PROTEZIONE CIVILE ITALIANA
-% covid_data = xlsread('data\pcmita','Foglio1','A2:L27');
-% x_covid = [(population0 - covid_data(:,7) - covid_data(:,9) - covid_data(:,10)), covid_data(:,[7,9,10])];
-% x_covid((20:length(x_covid)), :) = [];
-% ------------------------------------------------------------------------%
-theta_fit_res = [];
-sum_sq_error_res = [];
+covid_data = xlsread(excel,sheet,data_matrix);
 
 
 % ------------------------------------------------------------------------%
@@ -32,21 +24,26 @@ sum_sq_error_res = [];
 % ------------------------------------------------------------------------%
 iteration = 5;
 discretization = 11;
-% iteration = 1;
-% discretization = 3;
-population_min = 100;
-population_max = 100000;
+population_min = 40000;
+population_max = 250000;
 population_vec = linspace(population_min,population_max,discretization);
 
 
 % Guess values
-% theta0 = [0.0001 0.01 0.01 5 1];    % RAW GUESS
-theta0 = [8 1.4 0.05 0.12 6];
+% theta_pre0 = [0.0001 0.01 0.01 5 1];    % RAW GUESS
+theta_pre0 = [8 1.4 0.05 0.12 6];
 theta_min = [0 0 0 0 0];
 theta_max = [1e5 1e5 1e5 12 20];
 
+population_mean = (population_min + population_max)/2;
+dynamic_fit_return = dynamic_fit(covid_data, population_mean, theta_pre0, theta_min, theta_max);
+
+% New optimized guess for data set
+theta0(1,:) = dynamic_fit_return(:,2:end);
 
 % Preassignment
+theta_fit_res = [];
+sum_sq_error_res = [];
 population0 = [];
 sum_sq_error = zeros(1,discretization);
 theta_fit = zeros(discretization,length(theta0));
@@ -61,7 +58,6 @@ for i = 1:1:iteration
         
         sum_sq_error(j) = dynamic_fit_return(1);
         theta_fit(j,:) = dynamic_fit_return(:,2:end);
-        
     end
     
     [sum_sq_error_min, index] = min(sum_sq_error);
@@ -88,6 +84,7 @@ for i = 1:1:iteration
     
     
     theta_final = theta_fit(index,:);
+    theta0 = theta_final;
 end
 % ------------------------------------------------------------------------%
 % SOLUTION AND PLOT                                                       %
@@ -100,11 +97,10 @@ disp(theta_final)
 
 
 % FULL DATA
-data_matrix = 'A2:E62';
-covid_data = xlsread(excel,sheet,data_matrix);
+covid_data = xlsread(excel,sheet,data_matrix_tot);
 
 % PLOT
-tspan = 0:1:100;
+tspan = 0:1:500;
 dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan);
 
 

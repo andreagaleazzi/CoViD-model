@@ -4,7 +4,7 @@ function dynamic_plot_return = dynamic_plot(population0, theta, covid_data, tspa
 
     
     % PREDICTION
-    [t_predict,x_predict] = ode45(@(t_covid,x_init)Covid19(t_covid,x_init,theta),tspan,x0);
+    [t_predict,x_predict] = ode45(@(t_covid,x_init)dynamic_model_sigmoid(t_covid,x_init,theta),tspan,x0);
 
     
     % COVID DATA
