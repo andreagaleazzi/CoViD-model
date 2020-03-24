@@ -142,11 +142,10 @@ disp('Final infected population:')
 disp(population_final)
 disp(theta_final)
 
-% covid_data = xlsread('data\ChinaProvince','Henan','A2:E62');
-
-% PLOT (off)
+% PLOT (plot = 0/off | 1/on)
 tspan = 0:1:1000;
-dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan, 0);
+plot = 0;
+dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan, plot);
 
 
 
@@ -160,6 +159,12 @@ file_plot_data = [file_name,'_','plot_data', file_extension];
 file_plot_model = [file_name,'_','plot_model', file_extension];
 file_dynamics = [file_name,'_','dynamics', file_extension];
 file_theta = [file_name,'_','theta', file_extension];
+
+output_dir = fullfile('output');
+if ~exist(output_dir, 'dir')
+    mkdir(output_dir)  
+end
+
 
 
 %%% OUTPUTS
@@ -176,46 +181,48 @@ fprintf(file,"\t%i\t%f\t%f\t%f\t%f",peak_day,dynamic_plot_return(peak_index,2),d
 % Extiction
 fprintf(file,"\nextinction");
 for extinction_index = peak_index:1:length(dynamic_plot_return(:,3))
+    extintion_day = extinction_index - 1;
     if dynamic_plot_return(extinction_index,3) < 0.5
         % Found extinction day
-        extintion_day = extinction_index - 1;
         break
     end
     if extinction_index == length(dynamic_plot_return(:,3))
         % Missing extinction day
         tspan = 0:1:10000;
-        dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan);
+        dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan,0);
         
         % Recheck --------------------------------------------------------%
         for extinction_index_bis = peak_index:1:length(dynamic_plot_return(:,3))
             if dynamic_plot_return(extinction_index,3) < 0.5
                 % Found extinction day
                 extintion_day = extinction_index_bis - 1;
+                fprintf(file,"\t%i\t%f\t%f\t%f\t%f",extintion_day,dynamic_plot_return(extinction_index,2),dynamic_plot_return(extinction_index,3),dynamic_plot_return(extinction_index,4),dynamic_plot_return(extinction_index,5));
                 break
             end
             if extinction_index == length(dynamic_plot_return(:,3))
                 % Missing extinction day
                 tspan = 0:1:10000;
                 dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan);
-                extintion_day = -1;     % Not found!
+                fprintf(file,"\nextintion day not found!");
             end
         end
         % End check ------------------------------------------------------%
     end
 end
-fprintf(file,"\t%i\t%f\t%f\t%f\t%f",extintion_day,dynamic_plot_return(extinction_index,2),dynamic_plot_return(extinction_index,3),dynamic_plot_return(extinction_index,4),dynamic_plot_return(extinction_index,5));
 fclose(file);
 % ------------------------------------------------------------------------%
+
 
 
 % Output plot data %------------------------------------------------------%
 file = fopen(file_plot_data,'w');
 fprintf(file,"day\tsum\tinfected\trecovered\tdeceased");
 for k=1:1:length(covid_data)
-   fprintf(file,"\n%i\t%i\t%i\t%i\t%i",k-1,covid_data(k,2),covid_data(k,3),covid_data(k,4),covid_data(k,5));
+     fprintf(file,"\n%i\t%i\t%i\t%i\t%i",k-1,covid_data(k,2),covid_data(k,3),covid_data(k,4),covid_data(k,5));
 end
 fclose(file);
 % ------------------------------------------------------------------------%
+
 
 
 % Output plot model %-----------------------------------------------------%
@@ -228,11 +235,15 @@ plotter(...
 
 file = fopen(file_plot_model,'w');
 fprintf(file,"day\tsum\tinfected\trecovered\tdeceased");
-for k=1:1:(extintion_day+1)
-   fprintf(file,"\n%i\t%f\t%f\t%f\t%f",k-1,dynamic_plot_return(k,2),dynamic_plot_return(k,3),dynamic_plot_return(k,4),dynamic_plot_return(k,5));
-end
+if extintion_day ~= -1
+    fprintf(file,"\nextintion day not found!");
+    for k=1:1:(extintion_day+1)
+        fprintf(file,"\n%i\t%f\t%f\t%f\t%f",k-1,dynamic_plot_return(k,2),dynamic_plot_return(k,3),dynamic_plot_return(k,4),dynamic_plot_return(k,5));
+    end
+else
 fclose(file);
 % ------------------------------------------------------------------------%
+
 
 
 % Output theta (regression parameters) %----------------------------------%
