@@ -1,0 +1,11 @@
+{
+    "iteration" : 1,
+    "discretization" : 5,
+    "adaptive_population" : 1e6,
+    "adaptive_time" : 70,
+    "adaptive_constant" : 2,
+    "theta_pre0" : [8, 1.4, 0.05, 0.12, 6],
+    "theta_min" : [0, 0, 0, 0, 0],
+    "theta_max" : [1e5, 1e5, 1e5, 12, 20]
+
+}

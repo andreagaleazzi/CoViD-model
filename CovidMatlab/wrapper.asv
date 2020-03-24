@@ -1,23 +1,5 @@
 function wrapper(row)
 % ------------------------------------------------------------------------%
-% JSON PARSE                                                              %
-% ------------------------------------------------------------------------%
-json_settings = 'settings/settings.json';
-settings = jsondecode(fileread(json_settings));
-
-% Minimizer settings
-iteration           = settings.iteration;
-discretization      = settings.discretization;
-% Adaptive grid for population guess value
-adaptive_population = settings.adaptive_population;
-adaptive_time       = settings.adaptive_time;
-adaptive_constant	= settings.adaptive_constant;
-% Guess values for theta
-theta_pre0          = settings.theta_pre0';
-theta_min           = settings.theta_min';
-theta_max           = settings.theta_max';
-
-% ------------------------------------------------------------------------%
 % DATA                                                                    %
 % ------------------------------------------------------------------------%
 % Data csv names
@@ -45,7 +27,7 @@ deaths_data    = readmatrix(deaths,   'FileType', 'text', 'Delimiter', ',', 'Tri
 % end
     
 
-% Create matrix of experimental data
+
 covid_data = ...
     [...
     (0:1:(length(confirmed_data(row, 5:end))-1))',...
@@ -56,10 +38,16 @@ covid_data = ...
     ];
 
 
-
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
 % ------------------------------------------------------------------------%
+iteration = 1;
+discretization = 5;
+% Adaptive grid controlled by population and time
+% the more time it passes the lower the boundary gets
+adaptive_population = 1e6;
+adaptive_time = 70;
+adaptive_constant = 2;
 total_time = length(confirmed_data(row, 5:end))-1;
 adaptive_max = adaptive_population - total_time*adaptive_population/adaptive_time;
 if (adaptive_max) < 0
@@ -69,7 +57,15 @@ end
 population_min = max(covid_data(:,2));
 population_max = adaptive_max + population_min * adaptive_constant;
 
+
 population_vec = linspace(population_min,population_max,discretization);
+
+
+% Guess values
+% theta_pre0 = [0.0001 0.01 0.01 5 1];    % RAW GUESS
+theta_pre0 = [8 1.4 0.05 0.12 6];
+theta_min = [0 0 0 0 0];
+theta_max = [1e5 1e5 1e5 12 20];
 
 population_mean = (population_min + population_max)/2;
 dynamic_fit_return = dynamic_fit(covid_data, population_mean, theta_pre0, theta_min, theta_max);
@@ -127,11 +123,8 @@ for i = 1:1:iteration
     
     fprintf("\n");
 end
-
-
-
 % ------------------------------------------------------------------------%
-% SOLUTION (AND PLOT)                                                     %
+% SOLUTION AND PLOT                                                       %
 % ------------------------------------------------------------------------%
 disp('Final infected population:')
 disp(population_final)
@@ -139,10 +132,9 @@ disp(theta_final)
 
 % covid_data = xlsread('data\ChinaProvince','Henan','A2:E62');
 
-% PLOT (off)
+% PLOT
 tspan = 0:1:1000;
 dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan, 0);
-
 
 
 % ------------------------------------------------------------------------%
