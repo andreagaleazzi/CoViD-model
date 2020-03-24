@@ -2,7 +2,6 @@ close all
 clear
 clc
 
-format long g
 
 % Insert row of nation+region:
 row = 156;
