@@ -1,2 +1,4 @@
-output
 convergence
+other
+*.dat
+*.asv
