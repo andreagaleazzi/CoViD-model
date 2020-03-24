@@ -1,6 +1,6 @@
 {
-    "iteration" : 1,
-    "discretization" : 5,
+    "iteration" : 5,
+    "discretization" : 11,
     "adaptive_population" : 1e6,
     "adaptive_time" : 70,
     "adaptive_constant" : 2,
