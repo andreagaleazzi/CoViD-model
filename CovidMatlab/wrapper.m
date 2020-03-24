@@ -6,6 +6,10 @@ format long g
 json_settings = 'settings/settings.json';
 settings = jsondecode(fileread(json_settings));
 
+disp("Settings")
+disp(settings)
+fprintf("\n")
+
 % Minimizer settings
 iteration           = settings.iteration;
 discretization      = settings.discretization;
