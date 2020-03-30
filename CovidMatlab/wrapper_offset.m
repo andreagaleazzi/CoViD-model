@@ -1,4 +1,5 @@
-function wrapper(row)
+function stop = wrapper_offset(row, offset)
+stop = 0;
 format long g
 % ------------------------------------------------------------------------%
 % JSON PARSE                                                              %
@@ -26,18 +27,9 @@ theta_max           = settings.theta_max';
 % DATA                                                                    %
 % ------------------------------------------------------------------------%
 % Data csv names
-% confirmed = 'data/time_series_covid19_confirmed_global.csv';
-% recovered = 'data/time_series_covid19_recovered_global.csv';
-% deaths    = 'data/time_series_covid19_deaths_global.csv';
-
-% ITALIAN CIVIL PROTECTION AGENCY
-confirmed = 'data/italia/dati-regioni/totale_attualmente_positivi.csv';
-recovered = 'data/italia/dati-regioni/dimessi_guariti.csv';
-deaths    = 'data/italia/dati-regioni/deceduti.csv';
-
-% confirmed = 'data/time_series_19-covid-Confirmed.csv';
-% recovered = 'data/time_series_19-covid-Recovered.csv';
-% deaths    = 'data/time_series_19-covid-Deaths.csv';
+confirmed = 'data/time_series_19-covid-Confirmed.csv';
+recovered = 'data/time_series_19-covid-Recovered.csv';
+deaths    = 'data/time_series_19-covid-Deaths.csv';
 
 % Read csv
 confirmed_data = readmatrix(confirmed,'FileType', 'text', 'Delimiter', ',', 'TrimNonNumeric', 1);
@@ -69,17 +61,12 @@ covid_data = ...
     deaths_data(row, 5:end)'...
     ];
 
-% Trim last element (COVID parser fix - 30.03.20)
-covid_data = covid_data(1:(end-1), :);
-
-% Set new starting poing when reaching a predefined amount of cases
-for i = 1:1:(length(covid_data)-1)
-    if (covid_data(i + 1, 2) > 2)
-        covid_data = covid_data(i:end,:);
-        break
-    end
+if (offset > (length(confirmed_data(row, 5:end))-1))
+    stop = 1;
+    return
 end
 
+covid_data = covid_data(1:offset, :);
 
 % ------------------------------------------------------------------------%
 % MINIMIZER                                                               %
@@ -90,7 +77,7 @@ if (adaptive_max) < 0
     adaptive_max = 0;
 end
 
-population_min = max(covid_data(:,2))*0.8;
+population_min = max(covid_data(:,2));
 population_max = adaptive_max + population_min * adaptive_constant;
 
 population_vec = linspace(population_min,population_max,discretization);
@@ -164,8 +151,7 @@ disp(theta_final)
 % PLOT (plot = 0/off | 1/on)
 tspan = 0:1:1000;
 plot = 0;
-covid_data_plot = [(0:1:length(covid_data)-1)', covid_data(:,2:end)];
-dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data_plot, tspan, plot);
+dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data, tspan, plot);
 
 
 
@@ -173,12 +159,8 @@ dynamic_plot_return = dynamic_plot(population_final, theta_final, covid_data_plo
 % OUTPUT RESULTS                                                          %
 % ------------------------------------------------------------------------%
 %%% FILE NAMES
-% ------------------------------------------------------------------------%
-% OUTPUT RESULTS                                                          %
-% ------------------------------------------------------------------------%
-%%% FILE NAMES
-file_dir = 'output/italy/';
-file_name = strcat(num2str(row));
+file_dir = 'output/convergence/';
+file_name = strcat(num2str(row),'/',num2str(offset));
 file_extension = '.dat';
 file_plot_data = [file_dir,file_name,'/','plot_data', file_extension];
 file_plot_model = [file_dir,file_name,'/','plot_model', file_extension];
@@ -190,7 +172,7 @@ file_theta = [file_dir,file_name,'/','theta', file_extension];
 %     mkdir(output_dir)  
 % end
 
-output_dir = fullfile(strcat(file_dir,num2str(row)));
+output_dir = fullfile(strcat(file_dir,num2str(row),'/',num2str(offset)));
 if ~exist(output_dir, 'dir')
     mkdir(output_dir)  
 end
@@ -257,7 +239,7 @@ fclose(file);
 % Output plot model %-----------------------------------------------------%
 % Plot until extinction point
 plotter(...
-    0:1:(length(covid_data)-1),...
+    covid_data(:,1),...
     [covid_data(:,2),covid_data(:,3),covid_data(:,4),covid_data(:,5)],...
     dynamic_plot_return(1:(extintion_day+1),:)...
     )
@@ -265,7 +247,6 @@ plotter(...
 file = fopen(file_plot_model,'w');
 fprintf(file,"day\tsum\tinfected\trecovered\tdeceased");
 if extintion_day ~= -1
-%     fprintf(file,"\nextintion day not found!");
     for k=1:1:(extintion_day+1)
         fprintf(file,"\n%i\t%f\t%f\t%f\t%f",k-1,dynamic_plot_return(k,2),dynamic_plot_return(k,3),dynamic_plot_return(k,4),dynamic_plot_return(k,5));
     end

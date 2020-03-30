@@ -22,12 +22,12 @@ t_exp = theta(4);
 t_lag = theta(5);
 
 % Sigmoid modification
-r1 = r1 * sigmoid(t,1,t_lag);
-r2 = r2 * sigmoid(t,1,t_lag);
-r3 = r3 * sigmoid(t,1,t_lag);
+r1 = r1 * sigmoid(t,t_exp,t_lag);
+r2 = r2 * sigmoid(t,t_exp,t_lag);
+r3 = r3 * sigmoid(t,t_exp,t_lag);
 
 % ODE system
-dy(1) = t_exp * sigmoid_deriv(t,1,t_lag) - r1*A;
+dy(1) = - r1*A;
 dy(2) = r1*A - (r2 + r3)*B;
 dy(3) = r2*B;
 dy(4) = r3*B;
