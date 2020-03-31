@@ -31,9 +31,9 @@ theta_max           = settings.theta_max';
 % deaths    = 'data/time_series_covid19_deaths_global.csv';
 
 % ITALIAN CIVIL PROTECTION AGENCY
-confirmed = 'data/italia/dati-regioni/totale_attualmente_positivi.csv';
-recovered = 'data/italia/dati-regioni/dimessi_guariti.csv';
-deaths    = 'data/italia/dati-regioni/deceduti.csv';
+confirmed = 'data/italia/dati-regioni-tradotti/totale_positivi.csv';
+recovered = 'data/italia/dati-regioni-tradotti/dimessi_guariti.csv';
+deaths    = 'data/italia/dati-regioni-tradotti/deceduti.csv';
 
 % confirmed = 'data/time_series_19-covid-Confirmed.csv';
 % recovered = 'data/time_series_19-covid-Recovered.csv';
@@ -69,8 +69,6 @@ covid_data = ...
     deaths_data(row, 5:end)'...
     ];
 
-% Trim last element (COVID parser fix - 30.03.20)
-covid_data = covid_data(1:(end-1), :);
 
 % Set new starting poing when reaching a predefined amount of cases
 for i = 1:1:(length(covid_data)-1)
