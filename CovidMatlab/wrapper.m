@@ -75,6 +75,7 @@ covid_data = covid_data(1:(end-1), :);
 % Set new starting poing when reaching a predefined amount of cases
 for i = 1:1:(length(covid_data)-1)
     if (covid_data(i + 1, 2) > 2)
+        day_zero = i;
         covid_data = covid_data(i:end,:);
         break
     end
@@ -201,6 +202,10 @@ end
 file = fopen(file_dynamics,'w');
 fprintf(file,"dynamic\tday\tsum\tinfected\trecovered\tdeceased");
 
+% Day 0
+fprintf(file,"\nday_0");
+fprintf(file,"\t%i\t%f\t%f\t%f\t%f",day_zero,dynamic_plot_return(1,2),dynamic_plot_return(1,3),dynamic_plot_return(1,4),dynamic_plot_return(1,5));
+
 % Peak
 fprintf(file,"\npeak");
 [peak_population, peak_index] = max(dynamic_plot_return(:,3));
@@ -282,6 +287,11 @@ for k=1:1:length(theta_final)
    fprintf(file,"\t%.12f",theta_final(k));
 end
 fclose(file);
+% ------------------------------------------------------------------------%
+
+% Plot to file %----------------------------------------------------------%
+file_plot_image = [file_dir,file_name,'/','plot_image'];
+saveas(gcf, file_plot_image, 'svg');
 % ------------------------------------------------------------------------%
 
 end
