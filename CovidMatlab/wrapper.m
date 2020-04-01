@@ -289,7 +289,7 @@ fclose(file);
 
 % Plot to file %----------------------------------------------------------%
 file_plot_image = [file_dir,file_name,'/','plot_image'];
-saveas(gcf, file_plot_image, 'svg');
+saveas(gcf, file_plot_image, 'png');
 % ------------------------------------------------------------------------%
 
 end
