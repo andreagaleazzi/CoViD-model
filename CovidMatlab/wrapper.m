@@ -195,6 +195,7 @@ if ~exist(output_dir, 'dir')
 end
 
 
+
 %%% OUTPUTS
 % Output dynamics (peak and extintion) %----------------------------------%
 file = fopen(file_dynamics,'w');
@@ -214,8 +215,9 @@ fprintf(file,"\t%i\t%f\t%f\t%f\t%f",peak_day,dynamic_plot_return(peak_index,2),d
 fprintf(file,"\nextinction");
 for extinction_index = peak_index:1:length(dynamic_plot_return(:,3))
     extintion_day = extinction_index - 1;
-    if dynamic_plot_return(extinction_index,3) < 0.5
+    if ((dynamic_plot_return(extinction_index,3) < dynamic_plot_return(peak_index,3) * 0.01) | (dynamic_plot_return(extinction_index,3) < 0.5))
         % Found extinction day
+        fprintf(file,"\t%i\t%f\t%f\t%f\t%f",extintion_day,dynamic_plot_return(extinction_index,2),dynamic_plot_return(extinction_index,3),dynamic_plot_return(extinction_index,4),dynamic_plot_return(extinction_index,5));
         break
     end
     if extinction_index == length(dynamic_plot_return(:,3))
@@ -286,6 +288,8 @@ for k=1:1:length(theta_final)
 end
 fclose(file);
 % ------------------------------------------------------------------------%
+
+
 
 % Plot to file %----------------------------------------------------------%
 file_plot_image = [file_dir,file_name,'/','plot_image'];
