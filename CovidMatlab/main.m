@@ -11,6 +11,7 @@ clc
 % Starting from 2 (abruzzo) to 22 (Veneto)
 % Call wrapper for solution [once]
 % wrapper(2)
+download_pcm();
 
 while system('COVIDdataFormatter.exe') ~= 0
     disp("Error: 'COVIDdataFormatter.exe' cannot convert data");
