@@ -1,6 +1,21 @@
-convergence
-other
+### GITIGNORE
+# Files
 *.dat
 *.asv
+*.csv
+*.svg
+*.bmp
+*.jpeg
+*.png
+
+# Folders
+convergence
+other
 italia
 italy
+temp
+
+# Archives
+*.rar
+*.zip
+*.7z
