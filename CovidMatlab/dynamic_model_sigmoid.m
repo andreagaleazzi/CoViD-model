@@ -18,19 +18,21 @@ end
 r1 = theta(1);
 r2 = theta(2);
 r3 = theta(3);
-t_exp = theta(4);
-t_lag = theta(5);
+r4 = theta(4);
+t_exp = theta(5);
+t_lag = theta(6);
 
 % Sigmoid modification
 r1 = r1 * sigmoid(t,t_exp,t_lag);
 r2 = r2 * sigmoid(t,t_exp,t_lag);
 r3 = r3 * sigmoid(t,t_exp,t_lag);
+r4 = r4 * sigmoid(t,t_exp,t_lag);
 
 % ODE system
-dy(1) = - r1*A;
-dy(2) = r1*A - (r2 + r3)*B;
-dy(3) = r2*B;
-dy(4) = r3*B;
+dy(1) = - r1*A - r2*A*B;
+dy(2) = r1*A + r2*A*B - (r3 + r4)*B;
+dy(3) = r3*B;
+dy(4) = r4*B;
 
 dy = dy';
 
